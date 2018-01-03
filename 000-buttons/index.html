@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title>Buttons - EpicRPG</title>
+    <style>
+      body { margin: 0; }
+      .row { text-align: center; margin-top: 10px; }
+      .button-container { border: 1px solid purple; display: inline-block; width: 30%; cursor: pointer; padding: 10px 0; }
+    </style>
+  </head>
+  <body>
+    <div id="content-screen"></div>
+    <div id="controls">
+      <div class="row">
+        <div class="button-container" id="button0"></div>
+        <div class="button-container" id="button1"></div>
+        <div class="button-container" id="button2"></div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var Buttons = {
+          // button list
+          List: [],
+          Mappings: {},
+          Mapping: {
+            button0: function(){}, button1: function(){}, button2: function(){}
+          },
+          init: function () {
+            for (var i = 0; i < 3; i++) {
+              var button = document.getElementById('button' + i);
+              button.addEventListener('click', (function (j) {
+                return function() {
+                  Buttons.Mapping['button' + j]();
+                }
+              })(i));
+              this.List.push(button);
+            }
+          },
+          NewMapping: function (name, mapping) {
+            this.Mappings[name] = mapping;
+          },
+          AssignMapping: function (name) {
+            for (var i = 0; i < 3; i++) {
+              this.Mapping['button' + i] = this.Mappings[name][i].callback;
+              this.List[i].innerHTML = this.Mappings[name][i].caption;
+            }
+          },
+      };
+
+      Buttons.init();
+      Buttons.NewMapping('console', [
+        {caption: 'left',  callback: function () { console.log('left'); }},
+        {caption: 'swap',  callback: function () { Buttons.AssignMapping('nah'); }},
+        {caption: 'right', callback: function () { console.log('right'); }},
+      ]);
+
+      Buttons.NewMapping('nah', [
+        {caption: 'nah',    callback: function () { console.log('nothin\' doin\''); }},
+        {caption: 'unswap', callback: function () { Buttons.AssignMapping('console'); }},
+        {caption: 'nah',    callback: function () { console.log('nothin\' doin\''); }},
+      ]);
+      Buttons.AssignMapping('console');
+
+    </script>
+  </body>
+</html>
