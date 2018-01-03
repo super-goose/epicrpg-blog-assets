@@ -1,0 +1,73 @@
+<img id="pickaxe" src="https://hydra-media.cursecdn.com/terraria.gamepedia.com/7/7e/Tungsten_Pickaxe.png?version=f99b51beb3969b473306fc90ebb41755">
+<img id="background" src="https://hydra-media.cursecdn.com/terraria.gamepedia.com/d/d7/Copper_Pickaxe.png?version=37b2ea64370cbf574071bc2c2f7cc966">
+<canvas id="maincanvas" width="320" height="320"></canvas>
+
+<script>
+    var bg = document.getElementById('background');
+    var fg = document.getElementById('pickaxe');
+
+    var canvas = document.getElementById('maincanvas').getContext('2d');
+
+    var position = { x: 1, y: 1 };
+
+    // gotta populate the canvas with a background
+    for (i = 0; i < l; i++) {
+        for (j = 0; j < l; j++) {
+            canvas.drawImage(bg, 32 * i, 32 * j);
+        }
+    }
+
+    /*
+      Rerender EVERYTHING each time
+      174 operations per second
+    */
+    function version1() {
+        var i = 0, j = 0, l = 10;
+
+        for (var px = 0; px < 8; px++) {
+            for (i = 0; i < l; i++) {
+                for (j = 0; j < l; j++) {
+                    canvas.drawImage(bg, 32 * i, 32 * j);
+                }
+            }
+            canvas.drawImage(fg, 32 * px, 96);
+        }
+    }
+
+    /*
+      Only render the player's new position and the background tile over the previous position
+      Track previous position
+      9556 operations per second
+    */
+    function version2() {
+        var prev = null
+
+        for (var px = 0; px < 8; px++) {
+            if (prev !== null) {
+                canvas.drawImage(bg, 32 * prev, 96);
+            }
+            canvas.drawImage(fg, 32 * px, 96);
+            prev = px;
+        }
+    }
+
+    /*
+      Render new position, and each adjacent tile, since the player came from ONE of them
+      No need to track previous position, but a little slower...
+      3704 operations per second
+    */
+    function version3() {
+        var prev = null
+
+        for (var px = 0; px < 8; px++) {
+            if (px > 0) {
+                canvas.drawImage(bg, 32 * (px - 1), 96);
+            }
+            canvas.drawImage(fg, 32 * px, 96);
+            canvas.drawImage(bg, 32 * px + 1, 96);
+            canvas.drawImage(bg, 32 * px, 64);
+            canvas.drawImage(bg, 32 * px, 128);
+        }
+    }
+
+</script>
