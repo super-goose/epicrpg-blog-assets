@@ -1,0 +1,73 @@
+
+<!-- loading the image ONCE at the beginning, then only rendering to canvas each time -->
+<canvas id="test-canvas" width="100" height="100"></canvas>
+
+<img id="spritesheet" src="sprites.png" style="width: 32px; height: 64px;" />
+<script src="legend.js"></script>
+
+<script>
+    var imageDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAOISURBVMXBQWhbdRzA8e8vPJkHfSEThJEerJ56ENswVJgNPEpxSHYyEDz0ME/dRUhyGL3979IET5t4LHQU6kEaRqHog1cECxLbS4vQ0kESFId75A1kOcjP/bXPPUKavbUb+3xEVTkjYTQlHQEyDmennI8Cf2d4yTK8ZBleModzMiLKCEZVSMHhOVjSQwZ0SDIiymNGVRjD4Tlxsx5JNfWxjIi+np+g3u0II2Q4ByOiS3rIgA5R3yfJzXpYlaDJw16X0zicgRFRHlvSQwZ0iEV9n5ib9UjDISUjopxY0kOsAR1i399oEJu7VSN297NlxnFIwYjokh4Su3ujSmzuVg1r7/YGViVoEvtmYoG3r80AMxgRNarCEIdnMKCDtXd7A6sSNBnnkzt18rPT9LZ32bu9wSgZXqD87DRWfnaa02RIaUCH2HuL17DWilXOy+EcauoTq6nPKL3tXcbJkIJRlYZ4xOZu1agETRri0RCPcdaKVdaKVYyqMEKGM8rPTlMJmlSCJqfpbe9SCZqMkyEloyoN8UjKz06Tn51mmJv1OGg1sdaKVYyqcApRVZ7GiCgJxoWo75PU294lNlWqYiJGMqpCgqgqMSOijHD50wKxsBtiLRwcc9BqknT01QqlrTat+QLDiuvLuFkPE/E/oyoOJ4yI1tTHcrMeVtT3Ccp1YqWtNq35AtYK8NrqD8Reud9jlOL6Mpab9eDenxieMCLqMMTNekR9n6Bch3IdK+yGWCtTk9ANyU3kyE3k4H6P4voyVlCukxR2Q6zvPvycy19+Qa/VZO3iGyQZVXEYEvV9etu7FNeXsRrikfTOB5NYxfVlgnKdpF9/+oMSUNpq05ovEHZDjnaOOSpWsYyqMMQhobe9S6whHpZRFRKMiF6eyOFmPZgvEJTrXCjMEHZD6g+7rExNYi1stTERGFVhDIcTRlWMiHLCqApjRH2fIhCU6wzav5CbyMHBMbGVqUnYOeZpHBKMqpDCz9+2KfKf0lab1nwBqzVfIAeE3ZCjnWPSyHAGl64s4mY97ny0xtfvLnK0/yZWaatN7/f3+cv5mNzUVdIQVSUNI6KcuHRlkdijB/eIvXrxLWKPHtwjPNjEMqrCKRxSMCJaU5/Y6kyV2IUL/GsQRfz24ya5qatY1/dv4mY3ifo+RkSNqjCCwzNYnamSNIgihl3fv0ks6vu4WY9xRFUZZkSUF8CoCkP+AaNbZ79Hm7XkAAAAAElFTkSuQmCC';
+    var canvas = document.getElementById('test-canvas').getContext('2d');
+    var SPRITES = document.getElementById('spritesheet');
+    var CELL_SIZE = 32;
+    var img = new Image();
+    img.src = imageDataUrl;
+
+    function renderOldWay() {
+        canvas.drawImage(
+            SPRITES,
+            legend['zombie-red']['x'],
+            legend['zombie-red']['y'],
+            legend['zombie-red']['width'],
+            legend['zombie-red']['height'],
+            CELL_SIZE * 1,
+            CELL_SIZE * 1,
+            CELL_SIZE,
+            CELL_SIZE
+        );
+    }
+
+    function renderNewWay() {
+        canvas.drawImage(
+            img,
+            CELL_SIZE * 2,
+            CELL_SIZE * 2,
+            // CELL_SIZE,
+            // CELL_SIZE
+        );
+    }
+
+    function test(num) {
+        var start, end;
+        start = Date.now();
+        for (var i = 0; i < num; i++) {
+            renderOldWay();
+        }
+        end = Date.now();
+        console.log(`old way: ${num} iterations in ${end - start} ms`);
+        start = Date.now();
+        for (var i = 0; i < num; i++) {
+            renderNewWay();
+        }
+        end = Date.now();
+        console.log(`new way: ${num} iterations in ${end - start} ms`);
+    }
+
+    /*
+    
+    results:
+
+    test(100)
+canvas-test.html:45 old way: 100 iterations in 8 ms
+canvas-test.html:51 new way: 100 iterations in 0 ms
+undefined
+test(10000)
+canvas-test.html:45 old way: 10000 iterations in 97 ms
+canvas-test.html:51 new way: 10000 iterations in 48 ms
+undefined
+test(1000000)
+canvas-test.html:45 old way: 1000000 iterations in 5908 ms
+canvas-test.html:51 new way: 1000000 iterations in 3785 ms
+    
+    */
+</script>
